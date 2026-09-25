@@ -5,9 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Prueba MindAR</title>
+    <title>Recorrido AR</title>
 
+    <!-- A-FRAME -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <!-- MINDAR -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
     <style>
@@ -20,14 +23,20 @@
             overflow: hidden;
         }
 
-        /* ENCABEZADO */
+        /* =========================
+           ENCABEZADO
+           ========================= */
+
         #encabezado {
             position: fixed;
             top: 0;
             left: 0;
+
             width: 100%;
             height: 60px;
+
             background: rgba(0, 0, 0, 0.85);
+
             z-index: 20;
 
             display: flex;
@@ -39,18 +48,23 @@
         #encabezado button {
             padding: 8px 18px;
             font-size: 15px;
-            cursor: pointer;
         }
 
 
-        /* PIE */
+        /* =========================
+           PIE
+           ========================= */
+
         #pie {
             position: fixed;
             bottom: 0;
             left: 0;
+
             width: 100%;
             height: 45px;
+
             background: rgba(0, 0, 0, 0.85);
+
             z-index: 20;
 
             display: flex;
@@ -63,7 +77,10 @@
         }
 
 
-        /* FOTO QUE APARECE AL DETECTAR LA CALAVERA */
+        /* =========================
+           RESULTADO AR
+           ========================= */
+
         #resultadoAR {
             position: fixed;
 
@@ -72,11 +89,10 @@
             top: 60px;
             bottom: 45px;
 
-            height: auto;
             width: auto;
+            height: auto;
 
             max-height: calc(100vh - 105px);
-            max-width: 40vw;
 
             object-fit: contain;
 
@@ -86,11 +102,37 @@
         }
 
 
-        /* ESCENA AR */
+        /* CUADRADO */
+
+        #resultadoAR.cuadrado {
+            max-width: 40vw;
+        }
+
+
+        /* HORIZONTAL 16:9 */
+
+        #resultadoAR.horizontal {
+            max-width: 65vw;
+        }
+
+
+        /* VERTICAL 9:19 */
+
+        #resultadoAR.vertical {
+            max-width: 40vw;
+        }
+
+
+        /* =========================
+           ESCENA AR
+           ========================= */
+
         a-scene {
             position: fixed;
+
             top: 60px;
             left: 0;
+
             width: 100%;
             height: calc(100% - 105px);
         }
@@ -102,7 +144,10 @@
 <body>
 
 
-    <!-- ENCABEZADO -->
+    <!-- =========================
+         ENCABEZADO
+         ========================= -->
+
     <div id="encabezado">
 
         <button>BOTÓN 1</button>
@@ -112,15 +157,21 @@
     </div>
 
 
-    <!-- FOTO AR -->
+    <!-- =========================
+         RESULTADO QUE CAMBIA
+         ========================= -->
+
     <img
         id="resultadoAR"
-        src="./r01-esque.jpg"
+        src=""
         alt="Resultado AR"
     >
 
 
-    <!-- ESCENA AR -->
+    <!-- =========================
+         ESCENA MINDAR
+         ========================= -->
+
     <a-scene
         mindar-image="imageTargetSrc: ./targets.mind;"
         vr-mode-ui="enabled: false"
@@ -133,43 +184,121 @@
         </a-camera>
 
 
-        <!-- TARGET -->
+        <!-- TARGET 01 -->
         <a-entity
-            id="target"
-            mindar-image-target="targetIndex: 0">
+            mindar-image-target="targetIndex: 0"
+            data-resultado="./r01.jpg"
+            data-formato="cuadrado">
         </a-entity>
+
+
+        <!-- TARGET 02 -->
+        <a-entity
+            mindar-image-target="targetIndex: 1"
+            data-resultado="./r02.jpg"
+            data-formato="cuadrado">
+        </a-entity>
+
+
+        <!-- TARGET 03 -->
+        <a-entity
+            mindar-image-target="targetIndex: 2"
+            data-resultado="./r03.jpg"
+            data-formato="cuadrado">
+        </a-entity>
+
+
+        <!-- TARGET 04 -->
+        <a-entity
+            mindar-image-target="targetIndex: 3"
+            data-resultado="./r04.jpg"
+            data-formato="vertical">
+        </a-entity>
+
+
+        <!-- TARGET 05 -->
+        <a-entity
+            mindar-image-target="targetIndex: 4"
+            data-resultado="./r05.jpg"
+            data-formato="cuadrado">
+        </a-entity>
+
+
+        <!-- TARGET 06 -->
+        <a-entity
+            mindar-image-target="targetIndex: 5"
+            data-resultado="./r06.jpg"
+            data-formato="vertical">
+        </a-entity>
+
+
+        <!-- TARGET 07 -->
+        <a-entity
+            mindar-image-target="targetIndex: 6"
+            data-resultado="./r07.jpg"
+            data-formato="horizontal">
+        </a-entity>
+
+
+        <!-- TARGET 08 -->
+        <a-entity
+            mindar-image-target="targetIndex: 7"
+            data-resultado="./r08.jpg"
+            data-formato="horizontal">
+        </a-entity>
+
 
     </a-scene>
 
 
-    <!-- PIE -->
+    <!-- =========================
+         PIE
+         ========================= -->
+
     <div id="pie">
         PIE DE PÁGINA
     </div>
 
 
+    <!-- =========================
+         JAVASCRIPT
+         ========================= -->
+
     <script>
 
-        const target = document.querySelector("#target");
-        const resultado = document.querySelector("#resultadoAR");
+        const resultado = document.getElementById("resultadoAR");
 
         let ocultarTimer = null;
 
 
-        /* CUANDO ENCUENTRA LA CALAVERA */
+        /*
+        ==========================================
+        FUNCIÓN PARA MOSTRAR UN RESULTADO
+        ==========================================
+        */
 
-        target.addEventListener("targetFound", () => {
+        function mostrarResultado(target) {
 
             clearTimeout(ocultarTimer);
 
+            const archivo = target.getAttribute("data-resultado");
+            const formato = target.getAttribute("data-formato");
+
+            resultado.src = archivo;
+
+            resultado.className = formato;
+
             resultado.style.display = "block";
+        }
 
-        });
 
+        /*
+        ==========================================
+        FUNCIÓN PARA OCULTAR DESPUÉS DE 2 SEGUNDOS
+        ==========================================
+        */
 
-        /* CUANDO DEJA DE VER LA CALAVERA */
-
-        target.addEventListener("targetLost", () => {
+        function ocultarResultado() {
 
             clearTimeout(ocultarTimer);
 
@@ -178,10 +307,48 @@
                 resultado.style.display = "none";
 
             }, 2000);
+        }
+
+
+        /*
+        ==========================================
+        CONECTAR LOS 8 TARGETS
+        ==========================================
+        */
+
+        const targets = document.querySelectorAll(
+            "[mindar-image-target]"
+        );
+
+
+        targets.forEach((target) => {
+
+
+            /*
+            TARGET ENCONTRADO
+            */
+
+            target.addEventListener("targetFound", () => {
+
+                mostrarResultado(target);
+
+            });
+
+
+            /*
+            TARGET PERDIDO
+            */
+
+            target.addEventListener("targetLost", () => {
+
+                ocultarResultado();
+
+            });
 
         });
 
     </script>
+
 
 </body>
 
