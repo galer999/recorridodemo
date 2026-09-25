@@ -2,39 +2,50 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Recorrido AR - Demo</title>
+    <title>Prueba AR</title>
 
     <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-    <!-- AR.js para A-Frame -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- MindAR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
 
     <a-scene
+        mindar-image="imageTargetSrc: targets.mind;"
         embedded
-        arjs="sourceType: webcam; debugUIEnabled: false;"
-        renderer="logarithmicDepthBuffer: true;"
-    >
+        color-space="sRGB"
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false">
 
-        <!-- Marcador Hiro -->
-        <a-marker preset="hiro">
-
-            <!-- Cubo amarillo -->
-            <a-box
-                position="0 0.5 0"
-                material="color: yellow;"
-            ></a-box>
-
-        </a-marker>
+        <!-- Imagen que aparecerá al detectar el TARGET -->
+        <a-assets>
+            <img id="resultado" src="R01_esqueleto.png">
+        </a-assets>
 
         <!-- Cámara -->
-        <a-entity camera></a-entity>
+        <a-camera
+            position="0 0 0"
+            look-controls="enabled: false">
+        </a-camera>
+
+        <!-- TARGET 0 -->
+        <a-entity mindar-image-target="targetIndex: 0">
+
+            <!-- RESULTADO -->
+            <a-image
+                src="#resultado"
+                position="0 0 0"
+                width="1"
+                height="1">
+            </a-image>
+
+        </a-entity>
 
     </a-scene>
 
 </body>
 </html>
-
