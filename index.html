@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,36 +9,180 @@
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* ENCABEZADO */
+        #encabezado {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 20;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #encabezado button {
+            padding: 8px 18px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+
+        /* PIE */
+        #pie {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 20;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+
+        /* FOTO QUE APARECE AL DETECTAR LA CALAVERA */
+        #resultadoAR {
+            position: fixed;
+
+            right: 0;
+
+            top: 60px;
+            bottom: 45px;
+
+            height: auto;
+            width: auto;
+
+            max-height: calc(100vh - 105px);
+            max-width: 40vw;
+
+            object-fit: contain;
+
+            z-index: 15;
+
+            display: none;
+        }
+
+
+        /* ESCENA AR */
+        a-scene {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 105px);
+        }
+
+    </style>
 </head>
 
-<body style="margin: 0; overflow: hidden;">
 
-<a-scene
-    mindar-image="imageTargetSrc: ./targets.mind;"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false">
+<body>
 
-    <a-assets>
-        <img id="resultado" src="./r01-esque.jpg">
-    </a-assets>
 
-    <a-camera
-        position="0 0 0"
-        look-controls="enabled: false">
-    </a-camera>
+    <!-- ENCABEZADO -->
+    <div id="encabezado">
 
-    <a-entity mindar-image-target="targetIndex: 0">
+        <button>BOTÓN 1</button>
 
-        <a-plane
-            src="#resultado"
+        <button>BOTÓN 2</button>
+
+    </div>
+
+
+    <!-- FOTO AR -->
+    <img
+        id="resultadoAR"
+        src="./r01-esque.jpg"
+        alt="Resultado AR"
+    >
+
+
+    <!-- ESCENA AR -->
+    <a-scene
+        mindar-image="imageTargetSrc: ./targets.mind;"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+    >
+
+        <a-camera
             position="0 0 0"
-            width="1"
-            height="1">
-        </a-plane>
+            look-controls="enabled: false">
+        </a-camera>
 
-    </a-entity>
 
-</a-scene>
+        <!-- TARGET -->
+        <a-entity
+            id="target"
+            mindar-image-target="targetIndex: 0">
+        </a-entity>
+
+    </a-scene>
+
+
+    <!-- PIE -->
+    <div id="pie">
+        PIE DE PÁGINA
+    </div>
+
+
+    <script>
+
+        const target = document.querySelector("#target");
+        const resultado = document.querySelector("#resultadoAR");
+
+        let ocultarTimer = null;
+
+
+        /* CUANDO ENCUENTRA LA CALAVERA */
+
+        target.addEventListener("targetFound", () => {
+
+            clearTimeout(ocultarTimer);
+
+            resultado.style.display = "block";
+
+        });
+
+
+        /* CUANDO DEJA DE VER LA CALAVERA */
+
+        target.addEventListener("targetLost", () => {
+
+            clearTimeout(ocultarTimer);
+
+            ocultarTimer = setTimeout(() => {
+
+                resultado.style.display = "none";
+
+            }, 2000);
+
+        });
+
+    </script>
 
 </body>
+
 </html>
